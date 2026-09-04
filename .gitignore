@@ -46,4 +46,3 @@ airflow.db
 airflow.cfg
 airflow-webserver.pid
 
-data/processed/
