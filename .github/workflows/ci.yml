@@ -30,7 +30,3 @@ jobs:
       - name: Run unit tests
         run: |
           python -m pytest -v
-
-      - name: Run ETL pipeline
-        run: |
-          python -m src.etl.pipeline

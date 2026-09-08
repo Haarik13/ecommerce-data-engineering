@@ -1,0 +1,3 @@
+product_id,product_category_name,product_name_lenght,product_description_lenght,product_photos_qty,product_weight_g,product_length_cm,product_height_cm,product_width_cm
+product_1,health_beauty,50,500,2,1000,20,10,15
+product_2,watches_gifts,40,400,1,800,15,8,12

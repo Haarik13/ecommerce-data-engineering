@@ -1,4 +1,4 @@
-import pandas as pd
+from pathlib import Path
 
 from src.etl.extract import extract_data
 from src.etl.transform import (
@@ -8,8 +8,11 @@ from src.etl.transform import (
 from src.etl.data_quality import run_quality_checks
 
 
+TEST_DATA_DIR = Path(__file__).parent / "fixtures"
+
+
 def build_fact_table():
-    raw_data = extract_data()
+    raw_data = extract_data(data_dir=TEST_DATA_DIR)
     transformed_data = transform_all(raw_data)
 
     return create_order_items_fact(

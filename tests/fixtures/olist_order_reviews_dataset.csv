@@ -1,0 +1,3 @@
+review_id,order_id,review_score,review_comment_title,review_comment_message,review_creation_date,review_answer_timestamp
+review_1,order_1,5,,,2017-01-10 00:00:00,2017-01-11 00:00:00
+review_2,order_2,4,,,2017-02-10 00:00:00,2017-02-11 00:00:00

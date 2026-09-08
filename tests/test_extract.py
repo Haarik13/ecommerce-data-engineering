@@ -1,10 +1,15 @@
+from pathlib import Path
+
 import pandas as pd
 
 from src.etl.extract import extract_data
 
 
+TEST_DATA_DIR = Path(__file__).parent / "fixtures"
+
+
 def test_extract_data_returns_all_datasets():
-    data = extract_data()
+    data = extract_data(data_dir=TEST_DATA_DIR)
 
     expected_datasets = {
         "customers",
@@ -22,7 +27,7 @@ def test_extract_data_returns_all_datasets():
 
 
 def test_extract_data_returns_dataframes():
-    data = extract_data()
+    data = extract_data(data_dir=TEST_DATA_DIR)
 
     for name, df in data.items():
         assert isinstance(df, pd.DataFrame), (
@@ -31,18 +36,18 @@ def test_extract_data_returns_dataframes():
 
 
 def test_extract_data_expected_row_counts():
-    data = extract_data()
+    data = extract_data(data_dir=TEST_DATA_DIR)
 
     expected_row_counts = {
-        "customers": 99_441,
-        "geolocation": 1_000_163,
-        "order_items": 112_650,
-        "order_payments": 103_886,
-        "order_reviews": 99_224,
-        "orders": 99_441,
-        "products": 32_951,
-        "sellers": 3_095,
-        "category_translation": 71,
+        "customers": 2,
+        "geolocation": 2,
+        "order_items": 3,
+        "order_payments": 2,
+        "order_reviews": 2,
+        "orders": 2,
+        "products": 2,
+        "sellers": 2,
+        "category_translation": 2,
     }
 
     for name, expected_count in expected_row_counts.items():

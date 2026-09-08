@@ -6,9 +6,17 @@ import pandas as pd
 RAW_DATA_DIR = Path("data/raw")
 
 
-def extract_data() -> dict[str, pd.DataFrame]:
+def extract_data(
+    data_dir: Path = RAW_DATA_DIR,
+) -> dict[str, pd.DataFrame]:
     """
     Extract all raw Olist datasets into pandas DataFrames.
+
+    Parameters
+    ----------
+    data_dir : Path
+        Directory containing the raw CSV datasets.
+        Defaults to data/raw for normal pipeline execution.
     """
 
     datasets = {
@@ -26,7 +34,7 @@ def extract_data() -> dict[str, pd.DataFrame]:
     data = {}
 
     for name, filename in datasets.items():
-        file_path = RAW_DATA_DIR / filename
+        file_path = data_dir / filename
 
         if not file_path.exists():
             raise FileNotFoundError(
@@ -42,4 +50,3 @@ def extract_data() -> dict[str, pd.DataFrame]:
         )
 
     return data
-

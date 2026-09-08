@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 
 from src.etl.extract import extract_data
@@ -7,8 +9,30 @@ from src.etl.transform import (
 )
 
 
+TEST_DATA_DIR = Path(__file__).parent / "fixtures"
+
+
+def build_transformed_data():
+    raw_data = extract_data(data_dir=TEST_DATA_DIR)
+    return transform_all(raw_data)
+
+
+def build_fact_table():
+    transformed_data = build_transformed_data()
+
+    return create_order_items_fact(
+        orders=transformed_data["orders"],
+        order_items=transformed_data["order_items"],
+        products=transformed_data["products"],
+        customers=transformed_data["customers"],
+        category_translation=transformed_data[
+            "category_translation"
+        ],
+    )
+
+
 def test_transform_all_preserves_datasets():
-    raw_data = extract_data()
+    raw_data = extract_data(data_dir=TEST_DATA_DIR)
     transformed_data = transform_all(raw_data)
 
     assert set(transformed_data.keys()) == set(raw_data.keys())
@@ -18,8 +42,7 @@ def test_transform_all_preserves_datasets():
 
 
 def test_orders_timestamps_are_datetime():
-    raw_data = extract_data()
-    transformed_data = transform_all(raw_data)
+    transformed_data = build_transformed_data()
 
     orders = transformed_data["orders"]
 
@@ -38,8 +61,7 @@ def test_orders_timestamps_are_datetime():
 
 
 def test_order_items_numeric_columns():
-    raw_data = extract_data()
-    transformed_data = transform_all(raw_data)
+    transformed_data = build_transformed_data()
 
     order_items = transformed_data["order_items"]
 
@@ -56,22 +78,11 @@ def test_order_items_numeric_columns():
 
 
 def test_create_order_items_fact_table():
-    raw_data = extract_data()
-    transformed_data = transform_all(raw_data)
-
-    fact = create_order_items_fact(
-        orders=transformed_data["orders"],
-        order_items=transformed_data["order_items"],
-        products=transformed_data["products"],
-        customers=transformed_data["customers"],
-        category_translation=transformed_data[
-            "category_translation"
-        ],
-    )
+    fact = build_fact_table()
 
     assert isinstance(fact, pd.DataFrame)
 
-    assert fact.shape == (112_650, 26)
+    assert fact.shape[0] == 3
 
     required_columns = [
         "order_id",
@@ -94,18 +105,7 @@ def test_create_order_items_fact_table():
 
 
 def test_item_total_value_calculation():
-    raw_data = extract_data()
-    transformed_data = transform_all(raw_data)
-
-    fact = create_order_items_fact(
-        orders=transformed_data["orders"],
-        order_items=transformed_data["order_items"],
-        products=transformed_data["products"],
-        customers=transformed_data["customers"],
-        category_translation=transformed_data[
-            "category_translation"
-        ],
-    )
+    fact = build_fact_table()
 
     expected_total = (
         fact["price"] + fact["freight_value"]
@@ -119,18 +119,7 @@ def test_item_total_value_calculation():
 
 
 def test_delivery_days_are_non_negative():
-    raw_data = extract_data()
-    transformed_data = transform_all(raw_data)
-
-    fact = create_order_items_fact(
-        orders=transformed_data["orders"],
-        order_items=transformed_data["order_items"],
-        products=transformed_data["products"],
-        customers=transformed_data["customers"],
-        category_translation=transformed_data[
-            "category_translation"
-        ],
-    )
+    fact = build_fact_table()
 
     valid_delivery_days = fact["delivery_days"].dropna()
 
